@@ -19,6 +19,13 @@ class Power {
         write-host "Then try going to $($this.HttpListener.Prefixes)other/path" -f 'yellow'
         
         while ($this.HttpListener.IsListening) {
+            if ([Console]::KeyAvailable){
+                $readkey = [Console]::ReadKey($true)
+                if ($readkey.Modifiers -eq "Control" -and $readkey.Key -eq "C"){                
+                    break
+                }
+            }
+
             $context = $this.HttpListener.GetContext()
             $request = $context.Request
             $response = $context.Response
@@ -150,10 +157,10 @@ class Power {
 }
 
 $power = [Power]::new()
-$power.PublicFile("/kawethra.js","C:\Power\kawethra.js")
-$power.PublicFile("/components/home.kw","C:\Power\components\home.kw")
-$power.PublicFile("/components/projects.kw","C:\Power\components\projects.kw")
-$power.PublicFile("/components/contact.kw","C:\Power\components\contact.kw")
+$power.PublicFile("/kawethra.js","$pwd\kawethra.js")
+$power.PublicFile("/components/home.kw","$pwd\components\home.kw")
+$power.PublicFile("/components/projects.kw","$pwd\components\projects.kw")
+$power.PublicFile("/components/contact.kw","$pwd\components\contact.kw")
 
 $power.GET("/", {
     $context = $args[0]
@@ -163,7 +170,7 @@ $power.GET("/", {
         "title" = "Anasayfa"
         "redirect" = "#"
     }
-    $power.HTML($response, "C:\Power\index.html", $variables)
+    $power.HTML($response, "$pwd\index.html", $variables)
 })
 
 $power.Run("8080")
